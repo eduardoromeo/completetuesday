@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone Repo') {
+            steps {
+                echo 'Cloning...'
+		git branch: 'main', url: 'https://github.com/bryan3942023/Bryan-Proyecto-Mod-3.git'
+		            }
+        }
+
+        stage('Build Project') {
+            steps {
+                echo 'Building....'
+				bat 'npm install'
+            }
+        }
+		stage('Execute Automation Tests') {
+            steps {
+                echo 'Testing....'
+                catchError {
+                    bat 'npm run test'
+                }
+            }
+        }
+        stage('Generate Allure Report') {
+            steps {
+                echo 'Report....'
+				allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+            }
+        }
+    }
+}
